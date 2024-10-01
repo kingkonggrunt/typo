@@ -2,7 +2,9 @@
 
 {{/* Breadcrumbs */}}
 
+{{ if not .IsHome }}
 {{ partial "breadcrumbs.html" . }}
+{{ end }}
 
 <div {{ if .Param "autonumber" }} class="autonumber" {{ end }}>
 
@@ -20,7 +22,7 @@
     <p class="single-readtime">
       {{ with .Date }}
       {{ $dateMachine := . | time.Format "2006-01-02T15:04:05-07:00" }}
-      {{ $dateHuman := . | time.Format ":date_long" }}
+      {{ $dateHuman := . | time.Format (default ":date_long" $.Site.Params.singleDateFormat) }}
       <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
       {{end}}
 
@@ -63,8 +65,18 @@
 
   <div class="single-content">
     {{ .Content }}
+    {{ if .Site.Params.giscus.enable }}
     {{ partial "comments.html" . }}
+    {{ end }}
   </div>
+
+  {{ if .Store.Get "hasMermaid" }}
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  {{ end }}
+
 
   {{/* Next prev controls */}}
 
